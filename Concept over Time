@@ -1,0 +1,46 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jul 21 15:29:07 2021
+
+@author: Mark Schofield
+"""
+
+import pandas as pd
+import numpy as np
+from sklearn.neighbors import KernelDensity
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as grid_spec
+import seaborn as sns; sns.set_theme()
+
+colors = ['#97233F', '#006778', '#FF3C00', '#4F2683', '#203731', 
+          '#FFB612','#69BE28', '#D3BC8D','#0085CA']
+
+dfPlay = pd.read_csv("C:\\Users\Mark Schofield\\Desktop\\dfPlay5_dict.csv")
+dfPlay = dfPlay[dfPlay['OffensiveTeam']=='Patriots']
+dfConcept = dfPlay[dfPlay['concept_cv'].isin(['outs','curls','hoss','tosser',
+                                                  'mills', 'digs', 'ohio', 'spacing',
+                                                  'flood', 'portland', 'curlFlat'])]
+
+#%% Get and order routes/coverages
+concepts = dfConcept.groupby('concept_cv').count()
+concepts = concepts['EPA']
+concepts = concepts.sort_values(ascending=False)
+concepts = concepts.reset_index()
+concepts = concepts['concept_cv']
+weeks = dfConcept.groupby('Week').count()
+weeks = weeks['EPA']
+weeks = weeks.sort_values(ascending=False)
+weeks = weeks.reset_index()
+weeks = weeks['Week']
+
+#%% Group by Route/Coverage
+dfConcept2 = dfConcept[['concept_cv','Week','EPA']]
+dfConcept3 = dfConcept2.groupby(['concept_cv','Week']).mean()
+dfConcept3.reset_index(inplace=True)
+dfConcept3['concept_cv'] = pd.Categorical(dfConcept3['concept_cv'], concepts)
+dfConcept3['Week'] = pd.Categorical(dfConcept3['Week'], weeks, ordered=True)
+dfConcept3 = dfConcept3.sort_values(['concept_cv', 'Week'])
+dfConcept4 = dfConcept3.pivot('concept_cv','Week','EPA')
+cmap = sns.color_palette("Spectral", as_cmap=True)
+ax = sns.heatmap(dfConcept4, linewidths=.5, vmin=-0.25, vmax=0.25, cmap=cmap, yticklabels=True, cbar_kws={'label': 'EPA/Passing Concept'})
