@@ -1,0 +1,27 @@
+library(tidyverse)
+library(glue)
+library(ggimage)
+library(ggrepel)
+library(RCurl)
+library(teamcolors)
+library(ggthemes)
+
+#Bar Graph template 
+ggplot(data = off_tendencies, aes(x = reorder(Team, ElevenPersonnelPct), y = ElevenPersonnelPct)) +
+  geom_bar(stat = "identity", aes(color=Team, fill=Team), show.legend = FALSE) +
+  geom_image(aes(image = team_logo_espn), size = 0.04) +
+  scale_color_manual(values = off_tendencies$team_color) +
+  scale_fill_manual(values = off_tendencies$team_color) +
+  scale_y_continuous(labels = function(x) paste0(x, "%")) +
+  theme_fivethirtyeight() +
+  labs(title=glue("Highest 11 Personnel Percentage"),
+       subtitle="Since 2017",
+       x="",
+       y="11 Personnel Percentage",
+       caption="Data per PFF") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.subtitle = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(face = "bold")) +
+  theme(plot.subtitle = element_text(face = "bold")) +
+  theme(panel.border = element_rect(fill=NA, color="black", size=0.5, linetype="solid")) +
+  coord_flip()
