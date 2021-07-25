@@ -1,0 +1,33 @@
+library(tidyverse)
+library(magrittr)
+library(ggrepel)
+
+team_tend <- read_csv("C:\\Users\\Mark Schofield\\Desktop\\RPOFinal.csv")
+
+team_tend %>% 
+  ggplot(aes(x = RPO_EPA, y = Normal_EPA)) +
+  geom_point(aes(color = `EPA`), size = 7) +
+  geom_text_repel(aes(label = Concept), size = 3) +
+  scale_color_gradient2(low = "#d7191c", mid = "#ffff00", high = "#1a9641",
+                        midpoint = 0) +
+  labs(y = "EPA per Concept on RPO Dropbacks", x = "EPA per Concept on Normal Dropbacks",
+       title = "Normal vs RPO Dropback EPA") +
+  coord_cartesian(ylim = c(-0.7, 0.3), xlim = c(-0.7, 2)) + 
+  scale_y_continuous("EPA on Normal Dropbacks") +
+  scale_x_continuous("EPA on RPO Dropbacks") + 
+  theme_bw() + 
+  theme(panel.border = element_blank(),
+        # panel.grid.minor = element_blank(),
+        # panel.grid.major = element_blank(),
+        axis.title = element_text(size = 16),
+        axis.text.x = element_text(size = 18, face = "bold", margin = margin(5, 0, 20, 0)),
+        axis.text.y = element_text(size = 18, face = "bold", margin = margin(0, 5, 0, 20)),
+        plot.title = element_text(size = 24, hjust = 0.5),
+        plot.subtitle = element_text(size = 16, hjust = 0.5),
+        plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 10),
+        legend.key.height = unit(1, "cm"))
+
+ggsave("C:/Users/Mark Schofield/Desktop/Test.png",
+       width = 20, height = 13)
